@@ -36,7 +36,7 @@
 
         dd {
           display: inline-block;
-          width: 40%;
+          width: 50%;
         }
 
         tbody tr:nth-child(odd),
