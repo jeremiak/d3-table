@@ -2,9 +2,16 @@
 
 Idea sketch of a D3 helper library to make accessible, paginated tables easy. Lots of insights taken from [this piece by Heydon Pickering](https://inclusive-components.design/data-tables/). Depends on having `d3` on the page, though just for selections and data joins so should be compatible with v4 and v5.
 
+## Features
+
+* Create static, paginated tables with an array of JSON objects. Remember, its always a good idea to include a tabular representation of your data alongside a visualization :)
+* Set up ARIA roles and live regions for assistive technology
+* Create a narrow viewport optimized version of the table to make wide tables into tall tables on small screens
+* Only rely on `d3` (really just `d3-selection`), which is probably already on your page
+
 Check out `example.html` to see it in action. Make sure to try dragging the window so that its really small to see the narrow viewport representation of the data using `<dl>`s.
 
-## API
+## Usage
 
 The `d3Table` function is attached to the `window` object, and it takes two arguments: `selector` and `options`.
 
