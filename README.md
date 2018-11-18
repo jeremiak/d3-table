@@ -11,6 +11,8 @@ Idea sketch of a D3 helper library to make accessible, paginated tables easy. Lo
 
 Check out `example.html` to see it in action. Make sure to try dragging the window so that its really small to see the narrow viewport representation of the data using `<dl>`s.
 
+"Static" in this case means that once the table is initialized and rendered on the page, it will not update to data changes and only react to user interactions such as pagination. This library isn't for dynamic data tables, its primarly to be used as an accompaniment to a more robust visualization.
+
 ## Usage
 
 The `d3Table` function is attached to the `window` object, and it takes two arguments: `selector` and `options`.
