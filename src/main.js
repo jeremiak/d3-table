@@ -34,17 +34,19 @@ export default function initializeD3DataTable(selector, opts) {
     .attr("id", captionId)
     .text(opts.caption)
 
-  tableContainer
-    .append("div")
-    .attr("aria-controls", tableId)
-    .attr("class", "table-pagination")
-    .html(
-      () => `
-        <button class="previous-page" aria-label="Previous page of data" disabled>&lt;&lt;</button>
-        <span></span>
-        <button class="next-page" aria-label="Previous page of data">&gt;&gt;</button>
-      `
-    )
+  if (pageCount > 0) {
+    tableContainer
+      .append("div")
+      .attr("aria-controls", tableId)
+      .attr("class", "table-pagination")
+      .html(
+        () => `
+          <button class="previous-page" aria-label="Previous page of data" disabled>&lt;&lt;</button>
+          <span></span>
+          <button class="next-page" aria-label="Previous page of data">&gt;&gt;</button>
+        `
+      )
+  }
 
   table
     .append("thead")

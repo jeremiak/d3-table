@@ -49,9 +49,13 @@
     var table = tableContainer.append("table").attr("aria-live", "polite").attr("id", tableId).attr("role", "region").classed("table", true).style("width", "100%");
     container.attr("role", "group").attr("aria-labelledby", captionId).style("overflow-x", "auto");
     table.append("caption").attr("id", captionId).text(opts.caption);
-    tableContainer.append("div").attr("aria-controls", tableId).attr("class", "table-pagination").html(function () {
-      return "\n        <button class=\"previous-page\" aria-label=\"Previous page of data\" disabled>&lt;&lt;</button>\n        <span></span>\n        <button class=\"next-page\" aria-label=\"Previous page of data\">&gt;&gt;</button>\n      ";
-    });
+
+    if (pageCount > 0) {
+      tableContainer.append("div").attr("aria-controls", tableId).attr("class", "table-pagination").html(function () {
+        return "\n          <button class=\"previous-page\" aria-label=\"Previous page of data\" disabled>&lt;&lt;</button>\n          <span></span>\n          <button class=\"next-page\" aria-label=\"Previous page of data\">&gt;&gt;</button>\n        ";
+      });
+    }
+
     table.append("thead").append("tr").selectAll("th").data(columns).enter().append("th").attr("role", "columnheader").attr("scope", "col").text(function (d) {
       return d;
     });
