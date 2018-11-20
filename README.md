@@ -25,3 +25,4 @@ The `d3Table` function is attached to the `window` object, and it takes two argu
 * `columns` (optional) - Array of strings, defaults to `Object.keys` of the first item in `data`
 * `disableMobileList` (optional) - Boolean to prevent rendering data with a `<dl>` on small viewports. Use only if you have a really big table and are concerned with bloating the DOM
 * `pageLength` (optional) - Number of table rows to show, defaults to 5
+* `sortable` defaults to `true` - Include buttons to make table sortable by columns

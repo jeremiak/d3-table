@@ -5,18 +5,19 @@ import updateTablePage from './updatePagination'
 export default function initializeD3DataTable(selector, opts) {
   injectStyles()
 
-  var id = Math.floor(Math.random() * 1000)
-  var captionId = `caption-${id}`
-  var tableId = `table-${id}`
-  var columns = opts.columns || Object.keys(opts.data[0])
-  var currentPage = 0
-  var pageLength = opts.pageLength || 5
-  var pageCount = Math.floor(opts.data.length / pageLength)
+  const id = Math.floor(Math.random() * 1000)
+  const captionId = `caption-${id}`
+  const tableId = `table-${id}`
+  const columns = opts.columns || Object.keys(opts.data[0])
+  let currentPage = 0
+  const pageLength = opts.pageLength || 5
+  const pageCount = Math.floor(opts.data.length / pageLength)
+  const sortable = opts.sortable !== false
 
-  var container = d3.select(selector)
-  var tableContainer = container.append("div").classed("table-container", true)
+  const container = d3.select(selector)
+  const tableContainer = container.append("div").classed("table-container", true)
 
-  var table = tableContainer
+  const table = tableContainer
     .append("table")
     .attr("aria-live", "polite")
     .attr("id", tableId)
@@ -48,7 +49,7 @@ export default function initializeD3DataTable(selector, opts) {
       )
   }
 
-  table
+  var ths = table
     .append("thead")
     .append("tr")
     .selectAll("th")
@@ -59,19 +60,77 @@ export default function initializeD3DataTable(selector, opts) {
     .attr("scope", "col")
     .text(d => d)
 
-  var trs = table
+  if (sortable) {
+    ths.append("button")
+      .attr("aria-label", d => (
+        `sort table by ${d}`
+      ))
+      .attr("aria-sort", "none")
+      .attr("data-column", d => d)
+  }
+
+  const trs = table
     .append("tbody")
     .selectAll("tr")
-    .data(opts.data)
+    .data(opts.data, d => d[columns[0]])
     .enter()
     .append("tr")
 
-  columns.forEach(column => {
-    trs.append("td").text(d => d[column])
+  columns.forEach((column, i) => {
+    const td = trs.append("td")
+    if (i === 0) td.attr("scope", "row")
+    td.text(d => d[column])
   })
 
-  var previousPageBtn = container.select("button.previous-page")
-  var nextPageBtn = container.select(".next-page")
+  const tableHeaderSortBtns = table.selectAll('th button')
+  const previousPageBtn = container.select("button.previous-page")
+  const nextPageBtn = container.select(".next-page")
+
+  tableHeaderSortBtns.on('click', () => {
+    const target = d3.select(d3.event.target)
+    const sortKey = target.attr('data-column')
+    const sortOrder = target.attr('aria-sort')
+    const nextOrder = sortOrder === 'ascending' ? 'descending' : 'ascending'
+    let sortFactor = 1
+
+    if (sortOrder === 'ascending') {
+      sortFactor = -1
+    }
+
+    table
+      .select("thead")
+      .selectAll("button")
+      .attr("aria-sort", "none")
+
+    target.attr('aria-label', `sort table by ${sortKey} in ${nextOrder} order`)
+    target.attr('aria-sort', nextOrder)
+
+    table
+      .select("tbody")
+      .selectAll("tr")
+      .data(opts.data, d => d[columns[0]])
+      .sort((a, b) => {
+        const keyType = typeof a[sortKey]
+        if (keyType == 'string') {
+          const aKey = a[sortKey].toLowerCase()
+          const bKey = b[sortKey].toLowerCase()
+          if (aKey > bKey) return 1 * sortFactor
+          else if (aKey < bKey) return -1 * sortFactor
+          return 0
+        } else if (keyType === 'number') {
+          return a[sortKey] - (b[sortKey] * sortFactor)
+        } else if (keyType === 'boolean') {
+          if (sortOrder === 'ascending') return a[sortKey] < b[sortKey]
+          else return a[sortKey] > b[sortKey]
+        }
+      })
+
+    updateTablePage(container, {
+      currentPage: 0,
+      pageCount: pageCount,
+      pageLength: pageLength
+    })
+  })
 
   previousPageBtn.on("click", () => {
     if (currentPage === 0) return

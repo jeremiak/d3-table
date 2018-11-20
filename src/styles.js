@@ -2,7 +2,7 @@ export default function injectStyles() {
   var style = document.createElement('style')
 
   style.innerHTML = `
-      * {
+        * {
           box-sizing: border-box;
         }
 
@@ -30,6 +30,18 @@ export default function injectStyles() {
 
         .table-container caption {
           display: none;
+        }
+
+        thead button[aria-sort="none"]:before {
+          content: '↕';
+        }
+
+        thead button[aria-sort="ascending"]:before {
+          content: '↑';
+        }
+
+        thead button[aria-sort="descending"]:before {
+          content: '↓';
         }
 
         @media (max-width: 450px) {
