@@ -23,8 +23,9 @@
           d3.select('#table-container center').remove()
           d3Table('#table-container', {
             caption: 'A cool caption for the table goes here',
+            columns: ['title', 'completed', 'id', 'userId'],
             data,
-            pageLength: 20
+            pageLength: 10
           })
         })
       }, 1000)
