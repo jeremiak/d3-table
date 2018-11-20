@@ -1,5 +1,5 @@
 export default function addMobileListView(container, opts) {
-  var listContainer = container.append("div").attr("class", "list-container")
+  var listContainer = container.append("div").attr("class", "paginated-table-list-container")
 
   listContainer.append("h2").text(opts.caption)
 

@@ -7,6 +7,6 @@ export default function updateTablePage(container, opts) {
     return "none"
   })
   container
-    .select(".table-pagination span")
+    .select(".paginationed-table-controls span")
     .text(`Page ${opts.currentPage + 1} of ${opts.pageCount}`)
 }

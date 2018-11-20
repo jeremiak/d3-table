@@ -19,7 +19,7 @@
   }
 
   function addMobileListView(container, opts) {
-    var listContainer = container.append("div").attr("class", "list-container");
+    var listContainer = container.append("div").attr("class", "paginated-table-list-container");
     listContainer.append("h2").text(opts.caption);
     opts.data.forEach(function (d, i) {
       var row = listContainer.append("div");
@@ -35,7 +35,7 @@
 
   function injectStyles() {
     var style = document.createElement('style');
-    style.innerHTML = "\n        * {\n          box-sizing: border-box;\n        }\n\n        dt {\n          display: inline-block;\n          font-family: monospace;\n          width: 40%;\n        }\n\n        dd {\n          display: inline-block;\n          width: 50%;\n        }\n\n        tbody tr:nth-child(odd),\n        dl div:nth-child(odd) {\n          background-color: #ebebeb;\n        }\n\n        .table-container {\n          align-items: center;\n          display: flex;\n          flex-direction: column;\n        }\n\n        .table-container caption {\n          display: none;\n        }\n\n        thead button[aria-sort=\"none\"]:before {\n          content: '\u2195';\n        }\n\n        thead button[aria-sort=\"ascending\"]:before {\n          content: '\u2191';\n        }\n\n        thead button[aria-sort=\"descending\"]:before {\n          content: '\u2193';\n        }\n\n        @media (max-width: 450px) {\n          .table-container {\n            display: none;\n          }\n\n          .list-container {\n            display: block;\n          }\n        }\n\n        @media (min-width: 450px) {\n          .list-container {\n            display: none;\n          }\n        }\n    ";
+    style.innerHTML = "\n        .paginated-table-container * {\n          box-sizing: border-box;\n        }\n\n        .paginated-table-list-container dt {\n          display: inline-block;\n          font-family: monospace;\n          width: 40%;\n        }\n\n        .paginated-table-list-container dd {\n          display: inline-block;\n          width: 50%;\n        }\n\n        .paginated-table-body tr:nth-child(odd),\n        dl div:nth-child(odd) {\n          background-color: #ebebeb;\n        }\n\n        .paginated-table-container {\n          align-items: center;\n          display: flex;\n          flex-direction: column;\n        }\n\n        .paginated-table-container caption {\n          display: none;\n        }\n\n        .paginated-table [aria-sort=\"none\"] button:before {\n          content: '\u2195';\n        }\n\n        .paginated-table [aria-sort=\"ascending\"] button:before {\n          content: '\u2191';\n        }\n\n        .paginated-table [aria-sort=\"descending\"] button:before {\n          content: '\u2193';\n        }\n\n        @media (max-width: 450px) {\n          .paginated-table-container {\n            display: none;\n          }\n\n          .paginated-table-list-container {\n            display: block;\n          }\n        }\n\n        @media (min-width: 450px) {\n          .paginated-table-list-container {\n            display: none;\n          }\n        }\n    ";
     document.body.appendChild(style);
   }
 
@@ -46,7 +46,7 @@
       if (i >= currentStartIndex && i < currentStopIndex) return "table-row";
       return "none";
     });
-    container.select(".table-pagination span").text("Page ".concat(opts.currentPage + 1, " of ").concat(opts.pageCount));
+    container.select(".paginationed-table-controls span").text("Page ".concat(opts.currentPage + 1, " of ").concat(opts.pageCount));
   }
 
   function initializeD3DataTable(selector, opts) {
@@ -60,13 +60,13 @@
     var pageCount = Math.floor(opts.data.length / pageLength);
     var sortable = opts.sortable !== false;
     var container = d3.select(selector);
-    var tableContainer = container.append("div").classed("table-container", true);
-    var table = tableContainer.append("table").attr("aria-live", "polite").attr("id", tableId).attr("role", "region").classed("table", true).style("width", "100%");
+    var tableContainer = container.append("div").classed("paginated-table-container", true);
+    var table = tableContainer.append("table").attr("aria-live", "polite").attr("id", tableId).attr("role", "region").classed("paginated-table", true).style("width", "100%");
     container.attr("role", "group").attr("aria-labelledby", captionId).style("overflow-x", "auto");
     table.append("caption").attr("id", captionId).text(opts.caption);
 
     if (pageCount > 0) {
-      tableContainer.append("div").attr("aria-controls", tableId).attr("class", "table-pagination").html(function () {
+      tableContainer.append("div").attr("aria-controls", tableId).attr("class", "paginationed-table-controls").html(function () {
         return "\n          <button class=\"previous-page\" aria-label=\"Previous page of data\" disabled>&lt;&lt;</button>\n          <span></span>\n          <button class=\"next-page\" aria-label=\"Previous page of data\">&gt;&gt;</button>\n        ";
       });
     }
@@ -76,9 +76,10 @@
     });
 
     if (sortable) {
+      ths.attr("aria-sort", "none");
       ths.append("button").attr("aria-label", function (d) {
         return "sort table by ".concat(d);
-      }).attr("aria-sort", "none").attr("data-column", function (d) {
+      }).attr("data-column", function (d) {
         return d;
       });
     }
@@ -98,8 +99,9 @@
     var nextPageBtn = container.select(".next-page");
     tableHeaderSortBtns.on('click', function () {
       var target = d3.select(d3.event.target);
+      var parent = d3.select(target.node().parentNode);
       var sortKey = target.attr('data-column');
-      var sortOrder = target.attr('aria-sort');
+      var sortOrder = parent.attr('aria-sort');
       var nextOrder = sortOrder === 'ascending' ? 'descending' : 'ascending';
       var sortFactor = 1;
 
@@ -107,9 +109,9 @@
         sortFactor = -1;
       }
 
-      table.select("thead").selectAll("button").attr("aria-sort", "none");
+      table.selectAll("th").attr("aria-sort", "none");
       target.attr('aria-label', "sort table by ".concat(sortKey, " in ").concat(nextOrder, " order"));
-      target.attr('aria-sort', nextOrder);
+      parent.attr('aria-sort', nextOrder);
       table.select("tbody").selectAll("tr").data(opts.data, function (d) {
         return d[columns[0]];
       }).sort(function (a, b) {

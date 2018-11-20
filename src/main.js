@@ -15,14 +15,16 @@ export default function initializeD3DataTable(selector, opts) {
   const sortable = opts.sortable !== false
 
   const container = d3.select(selector)
-  const tableContainer = container.append("div").classed("table-container", true)
+  const tableContainer = container
+    .append("div")
+    .classed("paginated-table-container", true)
 
   const table = tableContainer
     .append("table")
     .attr("aria-live", "polite")
     .attr("id", tableId)
     .attr("role", "region")
-    .classed("table", true)
+    .classed("paginated-table", true)
     .style("width", "100%")
 
   container
@@ -39,7 +41,7 @@ export default function initializeD3DataTable(selector, opts) {
     tableContainer
       .append("div")
       .attr("aria-controls", tableId)
-      .attr("class", "table-pagination")
+      .attr("class", "paginationed-table-controls")
       .html(
         () => `
           <button class="previous-page" aria-label="Previous page of data" disabled>&lt;&lt;</button>
@@ -61,11 +63,11 @@ export default function initializeD3DataTable(selector, opts) {
     .text(d => d)
 
   if (sortable) {
+    ths.attr("aria-sort", "none")
     ths.append("button")
       .attr("aria-label", d => (
         `sort table by ${d}`
       ))
-      .attr("aria-sort", "none")
       .attr("data-column", d => d)
   }
 
@@ -88,8 +90,9 @@ export default function initializeD3DataTable(selector, opts) {
 
   tableHeaderSortBtns.on('click', () => {
     const target = d3.select(d3.event.target)
+    const parent = d3.select(target.node().parentNode)
     const sortKey = target.attr('data-column')
-    const sortOrder = target.attr('aria-sort')
+    const sortOrder = parent.attr('aria-sort')
     const nextOrder = sortOrder === 'ascending' ? 'descending' : 'ascending'
     let sortFactor = 1
 
@@ -98,12 +101,11 @@ export default function initializeD3DataTable(selector, opts) {
     }
 
     table
-      .select("thead")
-      .selectAll("button")
+      .selectAll("th")
       .attr("aria-sort", "none")
 
     target.attr('aria-label', `sort table by ${sortKey} in ${nextOrder} order`)
-    target.attr('aria-sort', nextOrder)
+    parent.attr('aria-sort', nextOrder)
 
     table
       .select("tbody")

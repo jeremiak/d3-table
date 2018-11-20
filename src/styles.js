@@ -2,60 +2,60 @@ export default function injectStyles() {
   var style = document.createElement('style')
 
   style.innerHTML = `
-        * {
+        .paginated-table-container * {
           box-sizing: border-box;
         }
 
-        dt {
+        .paginated-table-list-container dt {
           display: inline-block;
           font-family: monospace;
           width: 40%;
         }
 
-        dd {
+        .paginated-table-list-container dd {
           display: inline-block;
           width: 50%;
         }
 
-        tbody tr:nth-child(odd),
+        .paginated-table-body tr:nth-child(odd),
         dl div:nth-child(odd) {
           background-color: #ebebeb;
         }
 
-        .table-container {
+        .paginated-table-container {
           align-items: center;
           display: flex;
           flex-direction: column;
         }
 
-        .table-container caption {
+        .paginated-table-container caption {
           display: none;
         }
 
-        thead button[aria-sort="none"]:before {
+        .paginated-table [aria-sort="none"] button:before {
           content: '↕';
         }
 
-        thead button[aria-sort="ascending"]:before {
+        .paginated-table [aria-sort="ascending"] button:before {
           content: '↑';
         }
 
-        thead button[aria-sort="descending"]:before {
+        .paginated-table [aria-sort="descending"] button:before {
           content: '↓';
         }
 
         @media (max-width: 450px) {
-          .table-container {
+          .paginated-table-container {
             display: none;
           }
 
-          .list-container {
+          .paginated-table-list-container {
             display: block;
           }
         }
 
         @media (min-width: 450px) {
-          .list-container {
+          .paginated-table-list-container {
             display: none;
           }
         }
