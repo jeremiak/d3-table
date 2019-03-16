@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "live-server . & rollup -c -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:watch": "rollup -c -w",
+    "dev": "npm run build:watch & live-server .",
+    "test": "npm run build:watch & live-server . --no-browser & cypress open"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@babel/core": "^7.1.6",
     "@babel/preset-env": "^7.1.6",
+    "cypress": "^3.2.0",
     "live-server": "^1.2.0",
     "rollup": "^0.67.3",
     "rollup-plugin-babel": "^4.0.3",
