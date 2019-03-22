@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Testing page for d3-table</title>
+    <style>
+      #table-container {
+        border: 2px dashed red;
+        position: relative;
+        min-height: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Testing page for d3-table</h1>
+    <div id="table-container" style="width: 100%;">
+    </div>
+    <script src="https://unpkg.com/d3@5.7.0/dist/d3.min.js"></script>
+    <script src="build/d3Table.js"></script>
+    <script>
+      window.render = function render(args) {
+        const { caption, columns, data, pageLength } = args
+
+        d3Table('#table-container', {
+          caption,
+          columns,
+          data,
+          pageLength
+        })
+      }
+    </script>
+  </body>
+</html>
